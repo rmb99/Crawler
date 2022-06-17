@@ -5,10 +5,13 @@ Crawler for crawling dollar price and plot charts.
 ## Getting started
 For start crawling first create db in your docker compose:
 1. docker-compose up
-2. Install requirements
+
 
 ### Create database:
-3. docker exec -it pg-kilid createdb -U pg kilid
+2. docker exec -it pg-kilid createdb -U pg kilid
+
+### Install requirements
+3. pip install -r requirements.txt
 
 ### Creat tables
 4. python create_model.py
