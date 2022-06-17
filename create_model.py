@@ -1,16 +1,11 @@
+from sqlalchemy import Column, Integer
+from sqlalchemy import DateTime
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy import Column, Integer, VARCHAR, DateTime
-from sqlalchemy.ext.declarative import declarative_base
-from app.dollar_model import Dollar
-from sqlalchemy import create_engine, engine
-from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import declarative_base
-from sqlalchemy import Column, Integer, String
-from sqlalchemy.sql.schema import ForeignKey
-from sqlalchemy.sql.sqltypes import Float, SmallInteger
-from sqlalchemy.schema import ForeignKeyConstraint, MetaData, Table
-from app.config import BaseConfig
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.schema import MetaData
+
+from model.config import BaseConfig
 
 engine = create_engine(BaseConfig.SQLALCHEMY_DATABASE_URI)
 Session = sessionmaker(bind=engine)
@@ -18,6 +13,7 @@ session = Session()
 
 Base = declarative_base()
 meta = MetaData()
+
 
 class Dollar(Base):
     __tablename__ = 'dollar'

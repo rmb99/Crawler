@@ -8,5 +8,5 @@ Base = declarative_base()
 
 def get_session(conn_string):
     db = create_engine(conn_string)
-    Session = sessionmaker(db)
-    return Session()
+    session = sessionmaker(db)
+    return session()
