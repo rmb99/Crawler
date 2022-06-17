@@ -1,21 +1,20 @@
 import datetime
 import requests
 from bs4 import BeautifulSoup
-from app.dollar_model import Dollar
-from app.dollar_model import Dollar
+from persiantools.jdatetime import JalaliDate
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
-from app.config import BaseConfig
-from persiantools.jdatetime import JalaliDate, JalaliDateTime
+from sqlalchemy.orm import sessionmaker
+from model.config import BaseConfig
+from model.dollar_model import Dollar
 
 Base = declarative_base()
 
 
 def get_session(conn_string):
     db = create_engine(conn_string)
-    Session = sessionmaker(db)
-    return Session()
+    session = sessionmaker(db)
+    return session()
 
 
 def get_response(url):
@@ -27,14 +26,15 @@ def build_url():
     api = 'https://api.accessban.com/v1/market/indicator/summary-table-data/price_dollar_rl?length=500&start=0'
     return api
 
-def format_shamsi_date(date):
 
+def format_shamsi_date(date):
     date_list = date.split('/')
 
     year = int(date_list[0])
     month =int(date_list[1])
     day = int(date_list[2])
     return JalaliDate(year, month, day)
+
 
 def format_miladi_date(date):
     date_list = date.split('/')
@@ -64,10 +64,10 @@ def populate(data):
             change = 0
         bs2 = BeautifulSoup(_list[5])
         bs2_find_number = bs2.find('span', {'dir': 'ltr'})
-        postive_change = bs2.find('span', {'class':'high'})
-        negetive_change = bs2.find('span', {'class':'high'})
+        postive_change = bs2.find('span', {'class': 'high'})
+        negetive_change = bs2.find('span', {'class': 'high'})
         if bs2_find_number:
-            percent_change = bs2.text.replace('%','')
+            percent_change = bs2.text.replace('%', '')
         else:
             percent_change = 0
         if negetive_change:
@@ -79,19 +79,19 @@ def populate(data):
         miladi_date = _list[6]
         miladi_date_iso = format_miladi_date(miladi_date)
 
-
         data_list.append({
-            'opening': float(opening.replace(',','.')),
-            'min_price': float(min_price.replace(',','.')),
-            'max_price': float(max_price.replace(',','.')),
+            'opening': float(opening.replace(',', '.')),
+            'min_price': float(min_price.replace(',', '.')),
+            'max_price': float(max_price.replace(',', '.')),
             'change': change,
             'percent_change': float(percent_change),
             'shamsi_date': shamsi_date_iso,
             'miladi_date': miladi_date_iso,
-            'last': float(last.replace(',','.'))
+            'last': float(last.replace(',', '.'))
 
         })
     return data_list
+
 
 def save_date(data_list):
     session = get_session(BaseConfig.SQLALCHEMY_DATABASE_URI)
@@ -110,9 +110,6 @@ def save_date(data_list):
 
         session.add(dollar)
     session.commit()
-
-
-
 
 
 def execute():
